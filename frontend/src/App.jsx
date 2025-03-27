@@ -2,9 +2,6 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import * as MaterialUI from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { io } from 'socket.io-client';
-
-const socket = io('http://localhost:5000'); // Connect to the server
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -16,27 +13,6 @@ function App() {
 
   useEffect(() => {
     fetchProducts();
-
-    // Listen for real-time updates
-    socket.on('productAdded', (product) => {
-      setProducts((prevProducts) => [...prevProducts, product]);
-    });
-
-    socket.on('productUpdated', ({ id, product }) => {
-      setProducts((prevProducts) =>
-        prevProducts.map((p) => (p._id === id ? product : p))
-      );
-    });
-
-    socket.on('productDeleted', (id) => {
-      setProducts((prevProducts) => prevProducts.filter((p) => p._id !== id));
-    });
-
-    return () => {
-      socket.off('productAdded');
-      socket.off('productUpdated');
-      socket.off('productDeleted');
-    };
   }, []);
 
   const fetchProducts = async () => {

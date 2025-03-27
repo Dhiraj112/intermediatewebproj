@@ -1,6 +1,5 @@
 import Product from '../models/productmodel.js';
 import mongoose from 'mongoose'
-import { io } from '../server.js';
 
 export const addProduct=async(req,res)=>{
     const product=req.body;
@@ -10,7 +9,6 @@ export const addProduct=async(req,res)=>{
     const newProduct=new Product(product);
     try {
       await newProduct.save();
-      io.emit('productAdded', newProduct);
       res.status(201).json({success:true,product:newProduct});
     } catch (error) {
       console.log(error.message);
@@ -22,7 +20,6 @@ export const addProduct=async(req,res)=>{
     const{id}=req.params;
     try {
       await Product.findByIdAndDelete(id);
-      io.emit('productDeleted', id);
       res.status(200).json({success:true,message:'Product deleted successfully'});
     } catch (error) {
       console.log(error.message);
@@ -36,7 +33,6 @@ export const addProduct=async(req,res)=>{
     }
     try {
       await Product.findByIdAndUpdate(id,product);
-      io.emit('productUpdated', { id, product });
       res.status(200).json({success:true,message:'Product updated successfully'});
     } catch (error) {
       console.log(error.message);
